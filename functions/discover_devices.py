@@ -5,7 +5,7 @@ from meross_iot.controller.mixins.electricity import ElectricityMixin
 
 from flask import jsonify
 
-async def discover_devices(http_api_client):
+async def discover_devices(http_api_client, manager):
     # Placeholder data
     default_data = {
         "power": "123 W",
@@ -14,9 +14,6 @@ async def discover_devices(http_api_client):
     }
     if http_api_client is None:
         raise ValueError("HTTP client is not set up.")
-    # Setup and start the device manager
-    manager = MerossManager(http_client=http_api_client)
-    await manager.async_init()
 
     # Discover devices
     await manager.async_device_discovery()
@@ -46,11 +43,6 @@ async def discover_devices(http_api_client):
         counter += 1
         await asyncio.sleep(1)
 
-    # Close the manager and logout from http_api
-    print("ping count exceeds", max_count, ", closing manager")
-    manager.close()
-    await http_api_client.async_logout()
-
-    print("No MSS315 plugs found..., returning default data")
+    # No need to close manager since it's managed at the application level
+    print("ping count exceeds", max_count, ", no devices found", "returning default data")
     return jsonify(default_data)
-    
