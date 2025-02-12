@@ -30,7 +30,20 @@ async def initialize():
 async def get_data():
     return await discover_devices(http_api_client, manager)
     
+@app.route('/close', methods=['POST'])
+async def close():
+    print('Received close request')
+    try:
+        print('Attempting to close connection...')
+        manager.close()
+        await http_api_client.async_logout()
+        print('Connection closed successfully')
+        return jsonify({"status": "success", "message": "Connection closed successfully"})
+    except Exception as e:
+        print(f'Error closing connection: {e}')
+        return jsonify({"status": "error", "message": str(e)})
+
 if __name__ == '__main__':
     if os.name == 'nt':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    app.run(port=5000)
+    app.run(port=5001)  # Changed port from 5000 to 5001

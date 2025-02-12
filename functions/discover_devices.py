@@ -57,6 +57,7 @@ async def discover_devices(http_api_client, manager):
     if len(plugs) > 0:
         instant_consumption = await plugs[0].async_get_instant_metrics()
         print(f"Current consumption data: {instant_consumption}")
+        
         return jsonify({
             "power": str(instant_consumption.power),
             "voltage": str(instant_consumption.voltage),
