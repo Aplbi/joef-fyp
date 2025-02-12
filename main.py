@@ -1,5 +1,5 @@
 import asyncio, os
-from flask import Flask, jsonify
+from quart import Quart, jsonify
 
 # import credentials
 from cred import credentials
@@ -15,16 +15,20 @@ PASSWORD = credentials["PASSWORD"]
 if not EMAIL or not PASSWORD:
     raise ValueError("Email and password must be provided.")
 
-print("setting up http client and initializing manager...")
-http_api_client, manager = asyncio.run(setup(EMAIL, PASSWORD))
+app = Quart(__name__)
+http_api_client = None
+manager = None
 
-
-app = Flask(__name__)
+@app.before_serving
+async def initialize():
+    global http_api_client, manager
+    print("setting up http client and initializing manager...")
+    http_api_client, manager = await setup(EMAIL, PASSWORD)
 
 # route for /api/data
 @app.route('/api/data', methods=['GET'])
-def get_data():
-    return asyncio.run(discover_devices(http_api_client, manager))
+async def get_data():
+    return await discover_devices(http_api_client, manager)
     
 if __name__ == '__main__':
     if os.name == 'nt':

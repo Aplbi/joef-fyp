@@ -1,9 +1,8 @@
 import asyncio 
-from flask import jsonify
+from quart import jsonify
 from meross_iot.manager import MerossManager
 from meross_iot.controller.mixins.electricity import ElectricityMixin
 
-from flask import jsonify
 
 async def discover_devices(http_api_client, manager):
     # Placeholder data
