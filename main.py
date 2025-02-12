@@ -21,6 +21,7 @@ http_api_client, manager = asyncio.run(setup(EMAIL, PASSWORD))
 
 app = Flask(__name__)
 
+# route for /api/data
 @app.route('/api/data', methods=['GET'])
 def get_data():
     return asyncio.run(discover_devices(http_api_client, manager))
